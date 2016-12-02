@@ -11,14 +11,20 @@ logging:
     http.wire-log: DEBUG
 
 logbook:
-  format.style: http
+  format:
+    style: http
+  obfuscate:
+    parameters:
+      - access_token
+      - refresh_token
+      - password
   write:
     level: DEBUG
     category: http.wire-log
 
+security:
+  user:
+    password: mysecretpassword
 ---
 spring:
    profiles: test
-logging:
-  level:
-    es.virtualdesk.rulest.domain.executor.ExecutorService.ExecutorRREL: TRACE
