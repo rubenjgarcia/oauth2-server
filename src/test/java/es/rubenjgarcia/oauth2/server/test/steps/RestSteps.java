@@ -1,9 +1,11 @@
-package es.rubenjgarcia.oauth2.server.test;
+package es.rubenjgarcia.oauth2.server.test.steps;
 
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import org.junit.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,14 +19,32 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RestSteps extends BaseTest {
+public class RestSteps {
+
+    @Autowired
+    protected TestRestTemplate restTemplate;
 
     private ResponseEntity<Object> response;
 
     @Given("^I call GET \"([^\"]*)\"$")
     public void iCallGet(String path) throws Throwable {
         HttpEntity<?> request = new HttpEntity<>(null);
-        response = restTemplate.exchange(path, HttpMethod.GET, request, Object.class);
+        response = callGet(path, request);
+    }
+
+    @And("^I call GET \"([^\"]*)\" with authorization$")
+    public void iCallGETWithAuthorization(String path) throws Throwable {
+        Map bodyMap = assertResponseContainsKey("access_token");
+        String access_token = (String) bodyMap.get("access_token");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Collections.singletonList("Bearer " + access_token));
+        HttpEntity<?> request = new HttpEntity<>(headers);
+        response = callGet(path, request);
+    }
+
+    private ResponseEntity<Object> callGet(String path, HttpEntity<?> request) {
+        return restTemplate.exchange(path, HttpMethod.GET, request, Object.class);
     }
 
     @Given("^I call oauth token url with right credentials$")
@@ -60,6 +80,7 @@ public class RestSteps extends BaseTest {
     }
 
     private Map assertResponseIsMap() {
+        Assert.assertNotNull(response);
         Object body = response.getBody();
         Assert.assertNotNull(body);
         assertTrue(Map.class.isAssignableFrom(body.getClass()));

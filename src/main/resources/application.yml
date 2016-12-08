@@ -25,6 +25,18 @@ logbook:
 security:
   user:
     password: mysecretpassword
+
+---
+spring:
+  profiles: mongo
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: oauth2
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 ---
 spring:
    profiles: test
