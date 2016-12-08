@@ -1,0 +1,6 @@
+{
+  "_id": "user",
+  "password": "939fb2feba3e9b30b2d4cea7a186469a097377f218d516c2e15f31cc7b6bb2c0e771c28ef89f18cef6c671bb95495e87e2f6cb1dda503d1dfad3dba5761d3ca368b5e8761f079727",
+  "enabled": true,
+  "authorities": "USER"
+}

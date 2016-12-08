@@ -21,11 +21,6 @@ logbook:
   write:
     level: DEBUG
     category: http.wire-log
-
-security:
-  user:
-    password: mysecretpassword
-
 ---
 spring:
   profiles: mongo

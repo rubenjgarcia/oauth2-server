@@ -8,6 +8,8 @@ import cucumber.api.java.en.Given;
 import es.rubenjgarcia.oauth2.server.OAuthServer2Application;
 import es.rubenjgarcia.oauth2.server.mongo.client.Client;
 import es.rubenjgarcia.oauth2.server.mongo.client.ClientRepository;
+import es.rubenjgarcia.oauth2.server.mongo.user.User;
+import es.rubenjgarcia.oauth2.server.mongo.user.UserRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +36,9 @@ public class MongoTest {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @TestConfiguration
     public static class TestConfig extends AbstractMongoConfiguration {
 
@@ -54,6 +59,7 @@ public class MongoTest {
     @Given("^Exists client and user$")
     public void existsClientAndUser() throws Throwable {
         saveFromJson("/data/client.json", Client.class, clientRepository);
+        saveFromJson("/data/user.json", User.class, userRepository);
     }
 
     private <T> T saveFromJson(String path, Class<T> modelClazz, MongoRepository<T, ? extends Serializable> repository) throws IOException {
