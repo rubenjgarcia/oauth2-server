@@ -16,14 +16,14 @@ Feature: OAuth2 Server
     And The response entity should contains "scope" with value "read write trust"
 
   Scenario: Try to reach /user/principal without token
-    Given I call GET "/user/principal"
+    Given I call GET "/me/principal"
     Then The response status should be 401
     And The response entity should contains "error_description" with value "Full authentication is required to access this resource"
 
   Scenario: Get principal
     Given Exists client and user
     And I call oauth token url with right credentials
-    And I call GET "/user/principal" with authorization
+    And I call GET "/me/principal" with authorization
     Then The response status should be 200
     And The response entity should contains "details"
     And The response entity should contains "authorities"
@@ -36,14 +36,14 @@ Feature: OAuth2 Server
     And The response entity should contains "name"
 
   Scenario: Try to reach /user without token
-    Given I call GET "/user"
+    Given I call GET "/me"
     Then The response status should be 401
     And The response entity should contains "error_description" with value "Full authentication is required to access this resource"
 
   Scenario: Get user
     Given Exists client and user
     And I call oauth token url with right credentials
-    And I call GET "/user" with authorization
+    And I call GET "/me" with authorization
     Then The response status should be 200
     And The response entity should contains "password"
     And The response entity should contains "username"
