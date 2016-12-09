@@ -1,5 +1,7 @@
 package es.rubenjgarcia.oauth2.server.mongo.user;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import es.rubenjgarcia.oauth2.server.jackson.serializer.SecuredSerializer;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +31,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonSerialize(using = SecuredSerializer.class)
     public String getPassword() {
         return this.password;
     }

@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -106,5 +107,13 @@ public class RestSteps {
         boolean containsKey = bodyMap.containsKey(key);
         assertEquals(containsKey, shouldContains);
         return bodyMap;
+    }
+
+    @And("^The response entity size should be (\\d+)$")
+    public void theResponseEntitySizeShouldBe(int size) throws Throwable {
+        Object body = response.getBody();
+        Assert.assertNotNull(body);
+        assertTrue(List.class.isAssignableFrom(body.getClass()));
+        assertEquals(size, ((List) body).size());
     }
 }

@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping("/admin")
 public class AdminController {
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping("")
     public void isAdmin() {
 

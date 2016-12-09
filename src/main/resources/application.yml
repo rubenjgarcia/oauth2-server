@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: oauth2-server
+  messages:
+    basename: org/hibernate/validator/ValidationMessages, messages/errorMessages
 
 logging:
   level:

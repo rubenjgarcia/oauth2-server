@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 @Profile("mongo")
 @Configuration
@@ -66,10 +67,14 @@ public class MongoConfig extends AuthorizationServerConfigurerAdapter {
                 .authenticationManager(authenticationManager);
     }
 
+    @Bean
+    public MongoUserDetailsManager userDetailsManager() {
+        return new MongoUserDetailsManager(userRepository);
+    }
+
     @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        MongoUserDetailsManager mongoUserDetailsManager = new MongoUserDetailsManager(userRepository);
-        MongoUserDetailsManagerConfigurer mongoUserDetailsManagerConfigurer = new MongoUserDetailsManagerConfigurer(mongoUserDetailsManager);
+    public void globalUserDetails(AuthenticationManagerBuilder auth, UserDetailsManager userDetailsManager) throws Exception {
+        MongoUserDetailsManagerConfigurer mongoUserDetailsManagerConfigurer = new MongoUserDetailsManagerConfigurer((MongoUserDetailsManager) userDetailsManager);
         auth.apply(mongoUserDetailsManagerConfigurer);
     }
 }

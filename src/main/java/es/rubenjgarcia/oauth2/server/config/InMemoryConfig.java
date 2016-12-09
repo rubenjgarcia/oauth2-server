@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -18,6 +21,10 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.provisioning.UserDetailsManager;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Profile({"default", "inmemory"})
 @Configuration
@@ -56,10 +63,17 @@ public class InMemoryConfig extends AuthorizationServerConfigurerAdapter {
                 .authenticationManager(authenticationManager);
     }
 
+    @Bean
+    public UserDetailsManager userDetailsManager() {
+        InMemoryUserDetailsManagerConfigurer inMemoryUserDetailsManagerConfigurer = new InMemoryUserDetailsManagerConfigurer();
+        UserDetailsManager userDetailsManager = (UserDetailsManager) inMemoryUserDetailsManagerConfigurer.getUserDetailsService();
+        userDetailsManager.createUser(new User("user", "mysecretpassword", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))));
+        userDetailsManager.createUser(new User("admin", "mysecretadminpassword", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"))));
+        return userDetailsManager;
+    }
+
     @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user").password("mysecretpassword").roles("USER").and()
-                .withUser("admin").password("mysecretadminpassword").roles("USER", "ADMIN");
+    public void globalUserDetails(AuthenticationManagerBuilder auth, UserDetailsManager userDetailsManager) throws Exception {
+        auth.userDetailsService(userDetailsManager);
     }
 }
