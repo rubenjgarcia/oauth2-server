@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.yaml.snakeyaml.Yaml;
 
 import java.util.Base64;
 import java.util.Collections;
@@ -30,22 +31,36 @@ public class RestSteps {
     @Given("^I call GET \"([^\"]*)\"$")
     public void iCallGet(String path) {
         HttpEntity<?> request = new HttpEntity<>(null);
-        response = callGet(path, request);
+        response = call(path, HttpMethod.GET, request);
     }
 
     @And("^I call GET \"([^\"]*)\" with authorization$")
     public void iCallGETWithAuthorization(String path) {
+        HttpHeaders headers = getAuthorizationHeader();
+        HttpEntity<?> request = new HttpEntity<>(headers);
+        response = call(path, HttpMethod.GET, request);
+    }
+
+    private HttpHeaders getAuthorizationHeader() {
         Map bodyMap = assertResponseContainsKey("access_token");
         String access_token = (String) bodyMap.get("access_token");
 
         HttpHeaders headers = new HttpHeaders();
         headers.put("Authorization", Collections.singletonList("Bearer " + access_token));
-        HttpEntity<?> request = new HttpEntity<>(headers);
-        response = callGet(path, request);
+        return headers;
     }
 
-    private ResponseEntity<Object> callGet(String path, HttpEntity<?> request) {
-        return restTemplate.exchange(path, HttpMethod.GET, request, Object.class);
+    @And("^I call POST \"([^\"]*)\" with authorization and with data(?:[:])?$")
+    public void iCallPOSTWithAuthorizationAndWithData(String path, String data) throws Throwable {
+        HttpHeaders headers = getAuthorizationHeader();
+        Yaml yaml = new Yaml();
+        Object postData = yaml.load(data);
+        HttpEntity<?> request = new HttpEntity<>(postData, headers);
+        response = call(path, HttpMethod.POST, request);
+    }
+
+    private ResponseEntity<Object> call(String path, HttpMethod method, HttpEntity<?> request) {
+        return restTemplate.exchange(path, method, request, Object.class);
     }
 
     @Given("^I call oauth token url with right credentials$")

@@ -20,3 +20,33 @@ Feature: Users REST
     And I call GET "/admin/users/xxx" with authorization
     Then The response status should be 404
     And The response entity should contains "message" with value "User not found"
+
+  Scenario: Create user
+    Given Exists client and user
+    And I call oauth token url with right admin credentials
+    And I call POST "/admin/users" with authorization and with data:
+    """
+      username: "perry"
+      password: "platypus"
+      authorities: ["USER"]
+    """
+    Then The response status should be 201
+
+
+  Scenario Outline: Error trying to create user
+    Given Exists client and user
+    And I call oauth token url with right admin credentials
+    And I call POST "/admin/users" with authorization and with data:
+    """
+      username: <username>
+      password: <password>
+      authorities: [<authorities>]
+    """
+    Then The response status should be 400
+
+    Examples:
+
+      | username | password   | authorities |
+      | "perry"  | "platypus" |             |
+      | "perry"  |            | "USER"      |
+      |          | "platypus" | "USER"      |
