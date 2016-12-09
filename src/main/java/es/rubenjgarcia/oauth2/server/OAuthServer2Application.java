@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,6 +21,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @Configuration
 @EnableResourceServer
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = {"es.rubenjgarcia.oauth2.server.config", "es.rubenjgarcia.oauth2.server.controller"})
 public class OAuthServer2Application extends WebSecurityConfigurerAdapter {
 

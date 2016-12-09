@@ -59,6 +59,7 @@ public class InMemoryConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user").password("mysecretpassword").roles("USER");
+                .withUser("user").password("mysecretpassword").roles("USER").and()
+                .withUser("admin").password("mysecretadminpassword").roles("USER", "ADMIN");
     }
 }

@@ -24,7 +24,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Optional.ofNullable(this.authorities)
                 .orElse(Collections.emptyList())
-                .stream().map(a -> (GrantedAuthority) () -> a)
+                .stream().map(a -> (GrantedAuthority) () -> "ROLE_" + a)
                 .collect(Collectors.toList());
     }
 

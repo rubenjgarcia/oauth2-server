@@ -1,6 +1,19 @@
-{
-  "_id": "user",
-  "password": "939fb2feba3e9b30b2d4cea7a186469a097377f218d516c2e15f31cc7b6bb2c0e771c28ef89f18cef6c671bb95495e87e2f6cb1dda503d1dfad3dba5761d3ca368b5e8761f079727",
-  "enabled": true,
-  "authorities": "USER"
-}
+[
+  {
+    "_id": "user",
+    "password": "939fb2feba3e9b30b2d4cea7a186469a097377f218d516c2e15f31cc7b6bb2c0e771c28ef89f18cef6c671bb95495e87e2f6cb1dda503d1dfad3dba5761d3ca368b5e8761f079727",
+    "enabled": true,
+    "authorities": [
+      "USER"
+    ]
+  },
+  {
+    "_id": "admin",
+    "password": "939fb2feba3e9b300325f21a3853e1584acbe313be1da00d9184d41679c525774a2bad7bfb250a8e62735578c0fc37d33729002bf0dc15ffb6e913aae0a1c303091e66d8bf80e2fe",
+    "enabled": true,
+    "authorities": [
+      "USER",
+      "ADMIN"
+    ]
+  }
+]

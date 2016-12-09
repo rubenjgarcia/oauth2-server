@@ -23,6 +23,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@RunWith(SpringRunner.class)
@@ -62,14 +64,18 @@ public class MongoTest {
         saveFromJson("/data/user.json", User.class, userRepository);
     }
 
-    private <T> T saveFromJson(String path, Class<T> modelClazz, MongoRepository<T, ? extends Serializable> repository) throws IOException {
-        T entity = getEntityFromJson(path, modelClazz);
-        return repository.save(entity);
-    }
-
-    private <T> T getEntityFromJson(String path, Class<T> modelClazz) throws IOException {
+    private <T> void saveFromJson(String path, Class<T> modelClazz, MongoRepository<T, ? extends Serializable> repository) throws IOException {
         String json = IOUtils.toString(MongoTest.class.getResourceAsStream(path));
         DBObject dbObject = (DBObject) JSON.parse(json);
-        return mongoTemplate.getConverter().read(modelClazz, dbObject);
+
+        if (List.class.isAssignableFrom(dbObject.getClass())) {
+            List<T> entities = ((List<DBObject>) dbObject).stream()
+                    .map(o -> mongoTemplate.getConverter().read(modelClazz, o))
+                    .collect(Collectors.toList());
+            repository.save(entities);
+        } else {
+            T entity = mongoTemplate.getConverter().read(modelClazz, dbObject);
+            repository.save(entity);
+        }
     }
 }
