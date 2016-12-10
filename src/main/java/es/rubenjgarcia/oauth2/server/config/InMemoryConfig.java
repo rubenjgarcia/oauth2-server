@@ -1,5 +1,6 @@
 package es.rubenjgarcia.oauth2.server.config;
 
+import es.rubenjgarcia.oauth2.server.memory.InMemoryClientDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -41,19 +43,29 @@ public class InMemoryConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private UserApprovalHandler userApprovalHandler;
 
+    private InMemoryClientDetailsService inMemoryClientDetailsService = new InMemoryClientDetailsService();
+
     @Bean
     public TokenStore tokenStore() {
         return this.tokenStore;
     }
 
+    @Bean
+    public InMemoryClientDetailsService inMemoryClientDetailsService() {
+        return this.inMemoryClientDetailsService;
+    }
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("client")
-                .authorizedGrantTypes("password", "authorization_code", "refresh_token")
-                .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
-                .scopes("read", "write", "trust")
-                .secret("secret");
+        BaseClientDetails client = new BaseClientDetails();
+        client.setClientId("client");
+        client.setClientSecret("secret");
+        client.setScope(Arrays.asList("read", "write", "trust"));
+        client.setAuthorizedGrantTypes(Arrays.asList("password", "authorization_code", "refresh_token"));
+        client.setAuthorities(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT"), new SimpleGrantedAuthority("ROLE_TRUSTED_CLIENT")));
+        this.inMemoryClientDetailsService.addClientDetails(client);
+
+        clients.withClientDetails(this.inMemoryClientDetailsService);
     }
 
     @Override

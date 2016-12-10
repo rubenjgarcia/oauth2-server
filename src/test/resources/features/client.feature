@@ -16,3 +16,22 @@ Feature: Clients REST
     And The response entity should contains "authorized_grant_types"
     And The response entity should contains "authorities"
     And The response entity should contains "scope"
+
+  Scenario: Reach client endpoint with admin user with not existing client
+    Given Exists client and user
+    And I call oauth token url with right admin credentials
+    And I call GET "/admin/clients/xxx" with authorization
+    Then The response status should be 404
+    And The response entity should contains "message" with value "Client not found"
+
+  Scenario: Create client
+    Given Exists client and user
+    And I call oauth token url with right admin credentials
+    And I call POST "/admin/clients" with authorization and with data:
+    """
+      client_id: "new-client"
+      client_secret: "secret"
+      authorities: ["ROLE_CLIENT", "ROLE_TRUSTED_CLIENT"]
+      authorized_grant_types: ["password", "authorization_code", "refresh_token"]
+    """
+    Then The response status should be 201

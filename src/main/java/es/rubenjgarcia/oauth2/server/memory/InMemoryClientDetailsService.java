@@ -1,29 +1,30 @@
-package es.rubenjgarcia.oauth2.server.mongo.client;
+package es.rubenjgarcia.oauth2.server.memory;
 
 import org.springframework.security.oauth2.provider.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-public class MongoClientDetailsService implements ClientDetailsService, ClientRegistrationService {
+public class InMemoryClientDetailsService implements ClientDetailsService, ClientRegistrationService {
 
-    private ClientRepository clientRepository;
-
-    public MongoClientDetailsService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
-    }
+    private Map<String, ClientDetails> clientDetailsStore = new HashMap<>();
 
     @Override
     public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
-        return Optional.ofNullable(clientRepository.findOne(clientId))
+        return Optional.ofNullable(clientDetailsStore.get(clientId))
                 .orElseThrow(() -> new ClientRegistrationException("error.clientNotFoundError"));
     }
 
     @Override
     public void addClientDetails(ClientDetails clientDetails) throws ClientAlreadyExistsException {
-        this.clientRepository.save(new Client(clientDetails));
+        if (this.clientDetailsStore.containsKey(clientDetails.getClientId())) {
+            throw new ClientAlreadyExistsException("Client already exists: " + clientDetails.getClientId());
+        }
+
+        this.clientDetailsStore.put(clientDetails.getClientId(), clientDetails);
     }
 
     @Override
@@ -43,6 +44,6 @@ public class MongoClientDetailsService implements ClientDetailsService, ClientRe
 
     @Override
     public List<ClientDetails> listClientDetails() {
-        return new ArrayList<>(clientRepository.findAll());
+        throw new NotImplementedException(); //TODO
     }
 }
