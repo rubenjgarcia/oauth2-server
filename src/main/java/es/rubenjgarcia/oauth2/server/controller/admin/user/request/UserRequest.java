@@ -1,4 +1,4 @@
-package es.rubenjgarcia.oauth2.server.controller.admin.request;
+package es.rubenjgarcia.oauth2.server.controller.admin.user.request;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;

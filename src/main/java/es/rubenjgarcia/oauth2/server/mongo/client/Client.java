@@ -1,5 +1,7 @@
 package es.rubenjgarcia.oauth2.server.mongo.client;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -10,38 +12,51 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Document
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Client implements ClientDetails {
 
     @Id
-    private String id;
-    private String secret;
+    @JsonProperty("client_id")
+    private String clientId;
+
+    @Field("client_secret")
+    @JsonProperty("client_secret")
+    private String clientSecret;
+
     private List<String> authorities = Collections.emptyList();
     private Set<String> scopes = Collections.emptySet();
 
     @Field("resource_ids")
+    @JsonProperty("resource_ids")
     private Set<String> resourceIds = Collections.emptySet();
 
     @Field("authorized_grant_types")
+    @JsonProperty("authorized_grant_types")
     private Set<String> authorizedGrantTypes = Collections.emptySet();
 
     @Field("auto_approve_scopes")
+    @JsonProperty("auto_approve_scopes")
     private Set<String> autoApproveScopes;
 
     @Field("registered_redirect_uris")
+    @JsonProperty("registered_redirect_uris")
     private Set<String> registeredRedirectUris;
 
     @Field("access_token_validity_seconds")
+    @JsonProperty("access_token_validity_seconds")
     private Integer accessTokenValiditySeconds;
 
     @Field("refresh_token_validity_seconds")
+    @JsonProperty("refresh_token_validity_seconds")
     private Integer refreshTokenValiditySeconds;
 
     @Field("additional_information")
+    @JsonProperty("additional_information")
     private Map<String, Object> additionalInformation = new LinkedHashMap<>();
 
     @Override
     public String getClientId() {
-        return this.id;
+        return this.clientId;
     }
 
     @Override
@@ -51,12 +66,12 @@ public class Client implements ClientDetails {
 
     @Override
     public boolean isSecretRequired() {
-        return this.secret != null;
+        return this.clientSecret != null;
     }
 
     @Override
     public String getClientSecret() {
-        return this.secret;
+        return this.clientSecret;
     }
 
     @Override
@@ -112,22 +127,6 @@ public class Client implements ClientDetails {
         return Collections.unmodifiableMap(this.additionalInformation);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
     public void setAuthorities(List<String> authorities) {
         this.authorities = authorities;
     }
@@ -178,5 +177,13 @@ public class Client implements ClientDetails {
 
     public void setAutoApproveScopes(Collection<String> autoApproveScopes) {
         this.autoApproveScopes = new HashSet<>(autoApproveScopes);
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 }

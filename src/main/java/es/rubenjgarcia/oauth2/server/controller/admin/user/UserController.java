@@ -1,6 +1,6 @@
-package es.rubenjgarcia.oauth2.server.controller.admin;
+package es.rubenjgarcia.oauth2.server.controller.admin.user;
 
-import es.rubenjgarcia.oauth2.server.controller.admin.request.UserRequest;
+import es.rubenjgarcia.oauth2.server.controller.admin.user.request.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
