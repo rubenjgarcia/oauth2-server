@@ -9,6 +9,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MongoUserDetailsManager implements UserDetailsManager, GroupManager {
 
@@ -75,8 +76,16 @@ public class MongoUserDetailsManager implements UserDetailsManager, GroupManager
     }
 
     @Override
-    public void createUser(UserDetails user) {
-        throw new NotImplementedException(); //TODO
+    public void createUser(UserDetails userDetails) {
+        User user = new User();
+        user.setUsername(userDetails.getUsername());
+        user.setPassword(userDetails.getPassword());
+        user.setEnabled(true);
+        List<String> authorities = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        user.setAuthorities(authorities);
+        this.userRepository.save(user);
     }
 
     @Override
