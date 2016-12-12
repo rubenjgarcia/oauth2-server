@@ -20,7 +20,7 @@ public class UserController {
     @Autowired
     private UserDetailsManager userDetailsManager;
 
-    @RequestMapping("/{user}")
+    @RequestMapping(path = "/{user}", method = RequestMethod.GET)
     public UserDetails getUser(@PathVariable String user) throws IOException {
         UserDetails userDetails = this.userDetailsManager.loadUserByUsername(user);
         return new User(userDetails.getUsername(), "XXX", userDetails.isEnabled(),

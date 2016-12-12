@@ -38,7 +38,11 @@ public class MongoClientDetailsService implements ClientDetailsService, ClientRe
 
     @Override
     public void removeClientDetails(String clientId) throws NoSuchClientException {
-        throw new NotImplementedException(); //TODO
+        if (clientRepository.findOne(clientId) != null) {
+            this.clientRepository.delete(clientId);
+        } else {
+            throw new NoSuchClientException("error.clientNotFoundError");
+        }
     }
 
     @Override

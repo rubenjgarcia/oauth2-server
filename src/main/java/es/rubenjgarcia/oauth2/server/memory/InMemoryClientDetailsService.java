@@ -39,7 +39,11 @@ public class InMemoryClientDetailsService implements ClientDetailsService, Clien
 
     @Override
     public void removeClientDetails(String clientId) throws NoSuchClientException {
-        throw new NotImplementedException(); //TODO
+        if (clientDetailsStore.containsKey(clientId)) {
+            clientDetailsStore.remove(clientId);
+        } else {
+            throw new NoSuchClientException("error.clientNotFoundError");
+        }
     }
 
     @Override

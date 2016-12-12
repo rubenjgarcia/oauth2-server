@@ -23,7 +23,7 @@ public class ClientController {
     @Autowired
     private ClientRegistrationService clientRegistrationService;
 
-    @RequestMapping("/{client}")
+    @RequestMapping(path = "/{client}", method = RequestMethod.GET)
     public ClientDetails getClient(@PathVariable String client) {
         return this.clientDetailsService.loadClientByClientId(client);
     }
@@ -32,5 +32,11 @@ public class ClientController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody @Valid BaseClientDetails client) throws IOException {
         this.clientRegistrationService.addClientDetails(client);
+    }
+
+    @RequestMapping(path = "/{client}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteClient(@PathVariable String client) {
+        this.clientRegistrationService.removeClientDetails(client);
     }
 }

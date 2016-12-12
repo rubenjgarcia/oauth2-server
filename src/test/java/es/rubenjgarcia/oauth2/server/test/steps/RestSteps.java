@@ -34,11 +34,11 @@ public class RestSteps {
         response = call(path, HttpMethod.GET, request);
     }
 
-    @And("^I call GET \"([^\"]*)\" with authorization$")
-    public void iCallGETWithAuthorization(String path) {
+    @And("^I call (.*) \"([^\"]*)\" with authorization$")
+    public void iCallWithAuthorization(String method, String path) {
         HttpHeaders headers = getAuthorizationHeader();
         HttpEntity<?> request = new HttpEntity<>(headers);
-        response = call(path, HttpMethod.GET, request);
+        response = call(path, HttpMethod.valueOf(method), request);
     }
 
     private HttpHeaders getAuthorizationHeader() {

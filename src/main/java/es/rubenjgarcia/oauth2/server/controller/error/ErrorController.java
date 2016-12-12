@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,6 +29,12 @@ public class ErrorController {
     @ExceptionHandler(ClientRegistrationException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody ErrorResponse handleClientRegistrationException(ClientRegistrationException ex) {
+        return new ErrorResponse(messageSource.getMessage(ex.getMessage(), null, ex.getMessage(), Locale.ENGLISH)); // FIXME
+    }
+
+    @ExceptionHandler(NoSuchClientException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public @ResponseBody ErrorResponse handleNoSuchClientException(NoSuchClientException ex) {
         return new ErrorResponse(messageSource.getMessage(ex.getMessage(), null, ex.getMessage(), Locale.ENGLISH)); // FIXME
     }
 }
