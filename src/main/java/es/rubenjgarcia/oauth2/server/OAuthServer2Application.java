@@ -17,6 +17,11 @@ import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.zalando.logbook.BodyFilter;
+import org.zalando.logbook.BodyFilters;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @EnableResourceServer
@@ -24,8 +29,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = {"es.rubenjgarcia.oauth2.server.config", "es.rubenjgarcia.oauth2.server.controller"})
 public class OAuthServer2Application extends WebSecurityConfigurerAdapter {
-
-    //TODO Filter refresh_token in log
 
     @Autowired
     private ClientDetailsService clientDetailsService;
@@ -61,6 +64,14 @@ public class OAuthServer2Application extends WebSecurityConfigurerAdapter {
         TokenApprovalStore store = new TokenApprovalStore();
         store.setTokenStore(tokenStore);
         return store;
+    }
+
+    @Bean
+    public BodyFilter bodyFilter() {
+        Set<String> properties = new HashSet<>();
+        properties.add("access_token");
+        properties.add("refresh_token");
+        return BodyFilters.replaceJsonStringProperty(properties, "XXX");
     }
 
     public static void main(String[] args) {
